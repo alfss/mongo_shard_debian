@@ -63,6 +63,9 @@ function mongo_config_server_init {
     set_val_in_template bind_ip "$bind_ip" $config_file    
     set_val_in_template port $CFG_PORT $config_file      
     
+    echo "show config $config_file"
+    cat $config_file
+    
     dir_set_permission
 }
 
@@ -98,6 +101,8 @@ function mongo_route_server_init {
     set_val_in_template port $ROUTE_PORT $config_file      
     set_val_in_template config_server_list "$config_server_list" $config_file      
     
+    echo "show config $config_file"
+    cat $config_file
     
     dir_set_permission
 }
