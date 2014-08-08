@@ -14,7 +14,7 @@ function set_val_in_template {
     local var_value=$2
     local file_path=$3
     
-    sed -i s/%$var_name%/$var_value/ $file_path
+    sed -i s/%$var_name%/"${var_value}"/ $file_path
 }
 
 function dir_structure_init {
