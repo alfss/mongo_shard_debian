@@ -17,7 +17,7 @@ function set_val_in_template {
     local var_value=$2
     local file_path=$3
     
-    sed -i s#%$var_name%#$var_value# $file_path
+    sed -i s#%$var_name%#"$var_value"# $file_path
 }
 
 function dir_structure_init {
@@ -60,7 +60,7 @@ function mongo_config_server_init {
     set_val_in_template log_file $log_file $config_file 
     set_val_in_template pid_file $pid_file $config_file
     set_val_in_template dbpath $dbpath $config_file
-    set_val_in_template bind_ip $bind_ip $config_file    
+    set_val_in_template bind_ip "$bind_ip" $config_file    
     set_val_in_template port $CFG_PORT $config_file      
     
     dir_set_permission
@@ -94,9 +94,9 @@ function mongo_route_server_init {
     set_val_in_template log_file $log_file $config_file 
     set_val_in_template pid_file $pid_file $config_file
     set_val_in_template dbpath $dbpath $config_file
-    set_val_in_template bind_ip $bind_ip $config_file    
+    set_val_in_template bind_ip "$bind_ip" $config_file    
     set_val_in_template port $ROUTE_PORT $config_file      
-    set_val_in_template config_server_list $config_server_list $config_file      
+    set_val_in_template config_server_list "$config_server_list" $config_file      
     
     
     dir_set_permission
@@ -106,10 +106,10 @@ function mongo_route_server_init {
 
 if [[ $1 == '-cfg-server' ]]; then
     shift
-    mongo_config_server_init $1 $2
+    mongo_config_server_init $1 "$2"
 elif [[ $1 == '-route-server' ]]; then
     shift
-    mongo_route_server_init $1 $2 $3
+    mongo_route_server_init $1 "$2" "$3"
 elif [[ $1 == '-shard-server' ]]; then
     shift
     echo "shard"    
