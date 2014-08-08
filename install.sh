@@ -71,7 +71,7 @@ function mongo_route_server_init {
     
     local name_server=$1
     local bind_ip=$2
-    local config_server_list=$2
+    local config_server_list=$3
     
     local tpl_file_name="mongod_route.tpl"
     local tpl_file="templates/${tpl_file_name}"
@@ -114,6 +114,7 @@ elif [[ $1 == '-shard-server' ]]; then
     shift
     echo "shard"    
 else
+  echo "Please select action"
   echo "-cfg-server %name_server% %bind_ip% "  
   echo "-cfg-server mongo_c_1 \"127.0.0.1,192.168.0.2\""
   echo ""
