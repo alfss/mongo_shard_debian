@@ -88,3 +88,4 @@ nojournal = true
 replSet=%repl_set%
 
 shardsvr=true
+fork=false

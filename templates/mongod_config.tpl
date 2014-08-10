@@ -5,3 +5,4 @@ pidfilepath = %pid_file%
 port = %port%
 bind_ip = %bind_ip%
 configsvr = true
+fork=false
