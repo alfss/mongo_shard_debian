@@ -7,3 +7,4 @@ logappend = true
 fork = true
 bind_ip=%bind_ip%
 verbose = false
+
