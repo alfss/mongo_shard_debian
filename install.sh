@@ -11,6 +11,7 @@ CFG_PATH="${WORK_PATH}/config"
 ROUTE_PORT="27017"
 CFG_PORT="27019"
 SHARD_PORT="27020"
+ARBIT_PORT="27021"
 
 function set_val_in_template {
     local var_name=$1
@@ -56,14 +57,14 @@ function mongo_config_server_init {
     echo "copy template config server"        
     cp $tpl_file $config_file
     
-    echo "init config ${name_server} port $CFG_PORT"        
+    echo -e "\n\ninit config ${name_server} port $CFG_PORT"        
     set_val_in_template log_file $log_file $config_file 
     set_val_in_template pid_file $pid_file $config_file
     set_val_in_template dbpath $dbpath $config_file
     set_val_in_template bind_ip "$bind_ip" $config_file    
     set_val_in_template port $CFG_PORT $config_file      
     
-    echo "show config $config_file"
+    echo -e "\n\nshow config $config_file"
     cat $config_file
     
     dir_set_permission
@@ -93,7 +94,7 @@ function mongo_route_server_init {
     echo "copy template config server"        
     cp $tpl_file $config_file
     
-    echo "init config ${name_server} port $ROUTE_PORT"        
+    echo -e "\n\ninit config ${name_server} port $ROUTE_PORT"        
     set_val_in_template log_file $log_file $config_file 
     set_val_in_template pid_file $pid_file $config_file
     set_val_in_template dbpath $dbpath $config_file
@@ -101,7 +102,47 @@ function mongo_route_server_init {
     set_val_in_template port $ROUTE_PORT $config_file      
     set_val_in_template config_server_list "$config_server_list" $config_file      
     
-    echo "show config $config_file"
+    echo -e "\n\nshow config $config_file"
+    cat $config_file
+    
+    dir_set_permission
+}
+
+
+function mongo_shard_server_init {
+    dir_structure_init
+    
+    local name_server=$1
+    local bind_ip=$2
+    local repl_set=$3
+    
+    local tpl_file_name="mongod_shard.tpl"
+    local tpl_file="templates/${tpl_file_name}"
+    local log_file="${LOG_PATH}/${name_server}.log"    
+    local pid_file="${RUN_PATH}/${name_server}.pid" 
+    local config_file="${WORK_PATH}/config/${name_server}.conf"  
+    local dbpath="${DB_PATH}/${name_server}"
+    
+    echo "create log ${log_file}"
+    touch $log_file
+    echo "create pid ${pid_file}"
+    touch $pid_file    
+    echo "create dbpath ${name_server}"    
+    mkdir -p $dbpath
+    
+    echo "copy template config server"        
+    cp $tpl_file $config_file
+    
+    echo -e "\n\ninit shard ${name_server} port ${SHARD_PORT}"       
+     
+    set_val_in_template port $SHARD_PORT $config_file      
+    set_val_in_template log_file $log_file $config_file 
+    set_val_in_template pid_file $pid_file $config_file
+    set_val_in_template dbpath $dbpath $config_file
+    set_val_in_template bind_ip "$bind_ip" $config_file    
+    set_val_in_template repl_set "$repl_set" $config_file 
+    
+    echo -e "\n\nshow config $config_file"
     cat $config_file
     
     dir_set_permission
@@ -117,31 +158,16 @@ elif [[ $1 == '-route-server' ]]; then
     mongo_route_server_init $1 "$2" "$3"
 elif [[ $1 == '-shard-server' ]]; then
     shift
-    echo "shard"    
+    mongo_shard_server_init $1 "$2" "$3" 
 else
   echo "Please select action"
-  echo "-cfg-server %name_server% %bind_ip% "  
-  echo "-cfg-server mongo_c_1 \"127.0.0.1,192.168.0.2\""
+  echo "  -cfg-server %name_server% %bind_ip% "  
+  echo "  -cfg-server mongo_c_1 \"127.0.0.1,192.168.0.2\""
   echo ""
-  echo "-route-server %name_server% %bind_ip% %config_server_list%"  
-  echo "-route-server mongo_r_1 \"127.0.0.1,192.168.0.2\" \"mongo-c-1:$CFG_PORT, mongo-c-2:$CFG_PORT\""    
+  echo "  -route-server %name_server% %bind_ip% %config_server_list%"  
+  echo "  -route-server mongo_r_1 \"127.0.0.1,192.168.0.2\" \"mongo-c-1:$CFG_PORT, mongo-c-2:$CFG_PORT\""    
   echo ""
-  echo "-cfg-server %name_server% %bind_ip% "    
+  echo "  -cfg-server %name_server% %bind_ip% %repl_set% "    
+  echo "  -cfg-server mongo_s_1 \"127.0.0.1,192.168.0.2\" session_set01 "     
   echo "" 
 fi
-
-# while [[ $# > 1 ]]
-# do
-# key="$1"
-# shift
-#
-# case $key in
-#     -c)
-#         echo "cfg_server"
-#         shift
-#         ;;
-#     *)
-#         echo "please select setup server"
-#         ;;
-# esac
-# done
