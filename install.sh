@@ -47,6 +47,27 @@ function generate_init_file {
     set_val_in_template dbpath $dbpath $init_file
 }
 
+function generate_config_file {
+    local type_config_file=$1
+    
+    set_val_in_template log_file $log_file $config_file 
+    set_val_in_template pid_file $pid_file $config_file
+    set_val_in_template dbpath $dbpath $config_file
+    set_val_in_template bind_ip "$bind_ip" $config_file    
+
+    
+    if [[ type_config_file == 'route' ]]; then
+        set_val_in_template port $ROUTE_PORT $config_file      
+        set_val_in_template config_server_list "$config_server_list" $config_file      
+    elif [ type_config_file == 'shard' ]]; then 
+        set_val_in_template repl_set "$repl_set" $config_file 
+        set_val_in_template port $SHARD_PORT $config_file      
+    else
+        #config
+        set_val_in_template port $CFG_PORT $config_file      
+    fi
+}
+
 function mongo_config_server_init {
     dir_structure_init
     
@@ -62,7 +83,7 @@ function mongo_config_server_init {
     local pid_file="${RUN_PATH}/${name_server}.pid"  
     local config_file="${WORK_PATH}/config/${name_server}.conf"  
     local dbpath="${DB_PATH}/${name_server}"
-    
+        
     echo "create log ${log_file}"
     touch $log_file
     echo "create pid ${pid_file}"
@@ -74,11 +95,7 @@ function mongo_config_server_init {
     cp $tpl_file $config_file
     
     echo -e "\n\ninit config ${name_server} port $CFG_PORT"        
-    set_val_in_template log_file $log_file $config_file 
-    set_val_in_template pid_file $pid_file $config_file
-    set_val_in_template dbpath $dbpath $config_file
-    set_val_in_template bind_ip "$bind_ip" $config_file    
-    set_val_in_template port $CFG_PORT $config_file      
+    generate_config_file 'config'
     
     generate_init_file      
     
@@ -115,14 +132,8 @@ function mongo_route_server_init {
     echo "copy template config server"        
     cp $tpl_file $config_file
     
-    echo -e "\n\ninit config ${name_server} port $ROUTE_PORT"        
-    set_val_in_template log_file $log_file $config_file 
-    set_val_in_template pid_file $pid_file $config_file
-    set_val_in_template dbpath $dbpath $config_file
-    set_val_in_template bind_ip "$bind_ip" $config_file    
-    set_val_in_template port $ROUTE_PORT $config_file      
-    set_val_in_template config_server_list "$config_server_list" $config_file      
-    
+    echo -e "\n\ninit config ${name_server} port $ROUTE_PORT"      
+    generate_config_file 'route'       
     generate_init_file  
     
     echo -e "\n\nshow config $config_file"
@@ -162,13 +173,7 @@ function mongo_shard_server_init {
     
     echo -e "\n\ninit shard ${name_server} port ${SHARD_PORT}"       
      
-    set_val_in_template port $SHARD_PORT $config_file      
-    set_val_in_template log_file $log_file $config_file 
-    set_val_in_template pid_file $pid_file $config_file
-    set_val_in_template dbpath $dbpath $config_file
-    set_val_in_template bind_ip "$bind_ip" $config_file    
-    set_val_in_template repl_set "$repl_set" $config_file 
-    
+    generate_config_file 'shard'     
     generate_init_file  
     
     echo -e "\n\nshow config $config_file"
@@ -209,9 +214,21 @@ else
   echo "  -cfg-server mongo_c_1 \"127.0.0.1,192.168.0.2\""
   echo ""
   echo "  -route-server %name_server% %bind_ip% %config_server_list%"  
-  echo "  -route-server mongo_r_1 \"127.0.0.1,192.168.0.2\" \"mongo-c-1:$CFG_PORT, mongo-c-2:$CFG_PORT, mongo-c-2:$CFG_PORT\""    
+  echo "  -route-server mongo_r_1 \"127.0.0.1,192.168.0.2\" \"mongo-c-1:${CFG_PORT}, mongo-c-2:${CFG_PORT}, mongo-c-2:${CFG_PORT}\""    
   echo ""
   echo "  -shard-server %name_server% %bind_ip% %repl_set% "    
   echo "  -shard-server mongo_s_1 \"127.0.0.1,192.168.0.2\" session_set01 "     
-  echo "" 
+  echo " after install:"
+  echo " mongo mongo-r-1:${ROUTE_PORT}" 
+  echo " use name_db" 
+  echo " sh.addShard(\"mongo-shard-1:27020\")"
+  echo " sh.addShard(\"mongo-shard-2:27020\")"
+  echo " sh.enableSharding(\"name_db\");" 
+  echo -e "\n restore or create new collection \n"  
+  echo " HOWTO restore one collection:
+  mongorestore -h localhost --port 27018 -d repka_session --collection user_session dump/database/user_session.bson
+  " 
+  echo " sh.shardCollection(\"user_session\", { sessionId:1 } );" 
+  echo " sh.status();"
+         
 fi
