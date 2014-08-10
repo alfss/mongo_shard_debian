@@ -45,8 +45,6 @@ function generate_init_file {
     set_val_in_template log_file $log_file $init_file
     set_val_in_template pid_file $pid_file $init_file
     set_val_in_template dbpath $dbpath $init_file
-    set_val_in_template bind_ip "$bind_ip" $init_file
-    set_val_in_template repl_set "$repl_set" $init_file 
 }
 
 function mongo_config_server_init {
@@ -57,6 +55,9 @@ function mongo_config_server_init {
     
     local tpl_file_name="mongod_config.tpl"
     local tpl_file="templates/${tpl_file_name}"
+    local tpl_init_name="mongod_config_init.tpl"
+    local tpl_init_file="templates/${tpl_init_name}"
+    local init_file="/etc/init.d/${name_server}"
     local log_file="${LOG_PATH}/${name_server}.log"    
     local pid_file="${RUN_PATH}/${name_server}.pid"  
     local config_file="${WORK_PATH}/config/${name_server}.conf"  
@@ -79,6 +80,8 @@ function mongo_config_server_init {
     set_val_in_template bind_ip "$bind_ip" $config_file    
     set_val_in_template port $CFG_PORT $config_file      
     
+    generate_init_file      
+    
     echo -e "\n\nshow config $config_file"
     cat $config_file
     
@@ -94,6 +97,9 @@ function mongo_route_server_init {
     
     local tpl_file_name="mongod_route.tpl"
     local tpl_file="templates/${tpl_file_name}"
+    local tpl_init_name="mongod_init.tpl"
+    local tpl_init_file="templates/${tpl_init_name}"
+    local init_file="/etc/init.d/${name_server}"
     local log_file="${LOG_PATH}/${name_server}.log"    
     local pid_file="${RUN_PATH}/${name_server}.pid" 
     local config_file="${WORK_PATH}/config/${name_server}.conf"  
@@ -117,8 +123,11 @@ function mongo_route_server_init {
     set_val_in_template port $ROUTE_PORT $config_file      
     set_val_in_template config_server_list "$config_server_list" $config_file      
     
+    generate_init_file  
+    
     echo -e "\n\nshow config $config_file"
     cat $config_file
+    
     
     dir_set_permission
 }
