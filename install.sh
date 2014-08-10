@@ -167,7 +167,7 @@ else
   echo "  -route-server %name_server% %bind_ip% %config_server_list%"  
   echo "  -route-server mongo_r_1 \"127.0.0.1,192.168.0.2\" \"mongo-c-1:$CFG_PORT, mongo-c-2:$CFG_PORT\""    
   echo ""
-  echo "  -cfg-server %name_server% %bind_ip% %repl_set% "    
-  echo "  -cfg-server mongo_s_1 \"127.0.0.1,192.168.0.2\" session_set01 "     
+  echo "  -shard-server %name_server% %bind_ip% %repl_set% "    
+  echo "  -shard-server mongo_s_1 \"127.0.0.1,192.168.0.2\" session_set01 "     
   echo "" 
 fi
