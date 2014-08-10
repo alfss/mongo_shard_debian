@@ -55,7 +55,7 @@ function mongo_config_server_init {
     
     local tpl_file_name="mongod_config.tpl"
     local tpl_file="templates/${tpl_file_name}"
-    local tpl_init_name="mongod_config_init.tpl"
+    local tpl_init_name="mongod_init.tpl"
     local tpl_init_file="templates/${tpl_init_name}"
     local init_file="/etc/init.d/${name_server}"
     local log_file="${LOG_PATH}/${name_server}.log"    
@@ -97,7 +97,7 @@ function mongo_route_server_init {
     
     local tpl_file_name="mongod_route.tpl"
     local tpl_file="templates/${tpl_file_name}"
-    local tpl_init_name="mongod_init.tpl"
+    local tpl_init_name="mongod_route_init.tpl"
     local tpl_init_file="templates/${tpl_init_name}"
     local init_file="/etc/init.d/${name_server}"
     local log_file="${LOG_PATH}/${name_server}.log"    
