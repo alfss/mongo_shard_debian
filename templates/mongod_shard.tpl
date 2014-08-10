@@ -87,3 +87,4 @@ nojournal = true
 # in replica set configuration, specify the name of the replica set
 replSet=%repl_set%
 
+shardsvr=true
