@@ -34,6 +34,20 @@ function dir_set_permission {
 }
 
 
+
+function generate_init_file {
+    echo "copy template init file"
+    cp $tpl_init_file $init_file
+    chmod +x $init_file
+    
+    set_val_in_template port $SHARD_PORT $init_file
+    set_val_in_template log_file $log_file $init_file
+    set_val_in_template pid_file $pid_file $init_file
+    set_val_in_template dbpath $dbpath $init_file
+    set_val_in_template bind_ip "$bind_ip" $init_file
+    set_val_in_template repl_set "$repl_set" $init_file 
+}
+
 function mongo_config_server_init {
     dir_structure_init
     
@@ -118,6 +132,9 @@ function mongo_shard_server_init {
     
     local tpl_file_name="mongod_shard.tpl"
     local tpl_file="templates/${tpl_file_name}"
+    local tpl_init_name="mongod_init.tpl"
+    local tpl_init_file="templates/${init_name}"
+    local init_file="/etc/init.d/${name_server}"
     local log_file="${LOG_PATH}/${name_server}.log"    
     local pid_file="${RUN_PATH}/${name_server}.pid" 
     local config_file="${WORK_PATH}/config/${name_server}.conf"  
@@ -142,14 +159,31 @@ function mongo_shard_server_init {
     set_val_in_template bind_ip "$bind_ip" $config_file    
     set_val_in_template repl_set "$repl_set" $config_file 
     
+    generate_init_file  
+    
     echo -e "\n\nshow config $config_file"
     cat $config_file
     
     dir_set_permission
+    
+
 }
 
 # select action
 
+#
+#> sh.addShard(«rs01//mongo01-rs01:27017,mongo02-rs01:27017»)
+#> sh.addShard(«rs02/mongo01-rs02:27017,mongo02-rs02:27017»)
+#> sh.status()
+#
+
+#
+#> use filestore
+#> sh.enableSharding(«filestore»)
+#> sh.shardCollection(«filestore.fs.chunks», { files_id: 1, n: 1 })
+#> sh.status()
+#
+#
 if [[ $1 == '-cfg-server' ]]; then
     shift
     mongo_config_server_init $1 "$2"
