@@ -218,7 +218,7 @@ else
   echo ""
   echo "  -shard-server %name_server% %bind_ip% %repl_set% "    
   echo "  -shard-server mongo_s_1 \"127.0.0.1,192.168.0.2\" session_set01 "     
-  echo " after install:"
+  echo -e " after install:\n"
   echo " mongo mongo-r-1:${ROUTE_PORT}" 
   echo " use name_db" 
   echo " sh.addShard(\"mongo-shard-1:27020\")"
