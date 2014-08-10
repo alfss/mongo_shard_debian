@@ -85,7 +85,7 @@ nojournal = true
 #source = slave.example.com
 
 # in replica set configuration, specify the name of the replica set
-replSet=%repl_set%
+#replSet=%repl_set%
 
 shardsvr=true
 fork=false
