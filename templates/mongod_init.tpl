@@ -38,7 +38,6 @@ DESC=database
 NAME=%name_server%
 CONF=%config_file%
 DATA=%dbpath%
-LOGDIR=%logpath%
 PIDFILE=/var/run/$NAME.pid
 LOGFILE=%log_file%  # Server logfile
 ENABLE_MONGODB=yes
