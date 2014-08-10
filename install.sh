@@ -40,8 +40,7 @@ function generate_init_file {
     cp $tpl_init_file $init_file
     chmod +x $init_file
     
-    set_val_in_template config_file $config_file $config_file  
-    set_val_in_template log_file $log_file $config_file 
+    set_val_in_template config_file $config_file $init_file  
     set_val_in_template name_server $name_server $init_file
     set_val_in_template log_file $log_file $init_file
     set_val_in_template pid_file $pid_file $init_file
