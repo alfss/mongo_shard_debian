@@ -133,7 +133,7 @@ function mongo_shard_server_init {
     local tpl_file_name="mongod_shard.tpl"
     local tpl_file="templates/${tpl_file_name}"
     local tpl_init_name="mongod_init.tpl"
-    local tpl_init_file="templates/${init_name}"
+    local tpl_init_file="templates/${tpl_init_name}"
     local init_file="/etc/init.d/${name_server}"
     local log_file="${LOG_PATH}/${name_server}.log"    
     local pid_file="${RUN_PATH}/${name_server}.pid" 
