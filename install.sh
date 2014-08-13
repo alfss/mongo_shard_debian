@@ -59,7 +59,7 @@ function generate_config_file {
     if [[ type_config_file == 'route' ]]; then
         set_val_in_template port $ROUTE_PORT $config_file      
         set_val_in_template config_server_list "$config_server_list" $config_file      
-    elif [ type_config_file == 'shard' ]]; then 
+    elif [[ type_config_file == 'shard' ]]; then 
         set_val_in_template repl_set "$repl_set" $config_file 
         set_val_in_template port $SHARD_PORT $config_file      
     else
